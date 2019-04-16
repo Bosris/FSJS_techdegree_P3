@@ -1,7 +1,17 @@
+const $name = $("#name");
+
+//selects the credit card option
+$("select[name=user_payment] option:eq(1)").attr("selected", "selected");
+
+//creates the cost and appends it to activities
+let cost = 0;
+const label = document.createElement("label");
+label.innerHTML = `Cost: $${cost}`;
+$(".activities").append(label);
+
 // Focus name and hide other job role
-$("#name").focus();
+$name.focus();
 $("#other-title").hide();
-$("#credit-card").hide();
 $("#paypal-div").hide();
 $("#bitcoin-div").hide();
 //job Role section
@@ -39,48 +49,89 @@ $(".activities input").change(function() {
     $(this).attr("name") === "js-frameworks" &&
     !$("[name=express]").prop("disabled") //checks if express workshop is not disabled
   ) {
+    cost += 100;
+    label.innerHTML = `Cost: $${cost}`;
     $("[name=express").prop("disabled", true);
   } else if (
     $(this).attr("name") === "js-frameworks" &&
     $("[name=express]").prop("disabled")
   ) {
+    cost -= 100;
+    label.innerHTML = `Cost: $${cost}`;
     $("[name=express").prop("disabled", false);
   }
   // When express workshop is checked
   else if (
     $(this).attr("name") === "express" &&
-    !$("[name=js-frameworks]").prop("disabled") //checks if express workshop is not disabled
+    !$("[name=js-frameworks]").prop("disabled") //checks if js framework workshop is not disabled
   ) {
+    cost += 100;
+    label.innerHTML = `Cost: $${cost}`;
     $("[name=js-frameworks").prop("disabled", true);
   } else if (
     $(this).attr("name") === "express" &&
     $("[name=js-frameworks]").prop("disabled")
   ) {
+    cost -= 100;
+    label.innerHTML = `Cost: $${cost}`;
     $("[name=js-frameworks").prop("disabled", false);
   }
   // when javascript libraries selected
   else if (
     $(this).attr("name") === "js-libs" &&
-    !$("[name=node]").prop("disabled") //checks if express workshop is not disabled
+    !$("[name=node]").prop("disabled") //checks if node workshop is not disabled
   ) {
+    cost += 100;
+    label.innerHTML = `Cost: $${cost}`;
     $("[name=node").prop("disabled", true);
   } else if (
     $(this).attr("name") === "js-libs" &&
     $("[name=node]").prop("disabled")
   ) {
+    cost -= 100;
+    label.innerHTML = `Cost: $${cost}`;
     $("[name=node").prop("disabled", false);
   }
   // when node workshop selected
   else if (
     $(this).attr("name") === "node" &&
-    !$("[name=js-libs]").prop("disabled") //checks if express workshop is not disabled
+    !$("[name=js-libs]").prop("disabled") //checks if js-libs workshop is not disabled
   ) {
+    cost += 100;
+    label.innerHTML = `Cost: $${cost}`;
     $("[name=js-libs").prop("disabled", true);
   } else if (
     $(this).attr("name") === "node" &&
     $("[name=js-libs]").prop("disabled")
   ) {
+    cost -= 100;
+    label.innerHTML = `Cost: $${cost}`;
     $("[name=js-libs").prop("disabled", false);
+  } //main conference checks if its checked, add 200 else subtract 200
+  else if ($(this).attr("name") === "all" && $(this).prop("checked")) {
+    cost += 200;
+    label.innerHTML = `Cost: $${cost}`;
+  } else if ($(this).attr("name") === "all" && !$(this).prop("checked")) {
+    cost -= 200;
+    label.innerHTML = `Cost: $${cost}`;
+  }
+  //build tools checks if its checked, add 100 else subtract 100
+  else if ($(this).attr("name") === "build-tools" && $(this).prop("checked")) {
+    cost += 100;
+    label.innerHTML = `Cost: $${cost}`;
+  } else if (
+    $(this).attr("name") === "build-tools" &&
+    !$(this).prop("checked")
+  ) {
+    cost -= 100;
+    label.innerHTML = `Cost: $${cost}`;
+  } //npm workshop checks if its checked, add 100 else subtract 100
+  else if ($(this).attr("name") === "npm" && $(this).prop("checked")) {
+    cost += 100;
+    label.innerHTML = `Cost: $${cost}`;
+  } else if ($(this).attr("name") === "npm" && !$(this).prop("checked")) {
+    cost -= 100;
+    label.innerHTML = `Cost: $${cost}`;
   }
 });
 
@@ -96,6 +147,10 @@ $("#payment").change(function() {
     $("#paypal-div").hide();
   } else if ($(this).val() === "bitcoin") {
     $("#bitcoin-div").show();
+    $("#credit-card").hide();
+    $("#paypal-div").hide();
+  } else if ($(this).val() === "select_method") {
+    $("#bitcoin-div").hide();
     $("#credit-card").hide();
     $("#paypal-div").hide();
   }
@@ -138,6 +193,8 @@ function isValidActivites() {
     return false;
   }
 }
+
+//Credit card validation
 function isValidCreditCard() {
   if ($("#cc-num").val().length >= 13 && $("#cc-num").val().length <= 16) {
     $("#cc-num").css("border", "2px solid #c1deeb");
@@ -148,6 +205,7 @@ function isValidCreditCard() {
   }
 }
 
+// Zip code validation
 function isValidZipCode() {
   const $zipCode = $("#zip").val();
   const zipRegex = /^[0-9]{5}$/gm;
@@ -160,6 +218,7 @@ function isValidZipCode() {
   }
 }
 
+//CVV validation
 function isValidCVV() {
   const $cvv = $("#cvv").val();
   const cvvRegex = /^[0-9]{3}$/gm;
@@ -172,20 +231,22 @@ function isValidCVV() {
   }
 }
 
+// checks if there's any fields are false, if it is then prevent submission
 $("[type=submit]").click(function(e) {
-  e.preventDefault();
   const paymentVal = $("#payment").val();
-  isValidActivites();
-  isValidName();
-  isValidEmail();
-  if (!isValidName && !isValidEmail && !isValidActivites) {
+  if (
+    isValidName() === false ||
+    isValidEmail() === false ||
+    isValidActivites() === false
+  ) {
     e.preventDefault();
     if (paymentVal === "credit card") {
       e.preventDefault();
-      isValidCVV();
-      isValidCreditCard();
-      isValidZipCode();
-      if (!isValidCVV && !isValidCreditCard && !isValidZipCode) {
+      if (
+        isValidCVV() === false ||
+        isValidCreditCard() === false ||
+        isValidZipCode() === false
+      ) {
         e.preventDefault();
       }
     }
