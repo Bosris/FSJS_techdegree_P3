@@ -104,4 +104,90 @@ $("#payment").change(function() {
 //Form validation section
 
 //Name validation
-const $name = $("#name");
+function isValidName() {
+  const $name = $("#name");
+
+  if ($name.val() === "") {
+    $name.css("border", "2px solid red");
+    return false;
+  } else {
+    $name.css("border", "2px solid #c1deeb");
+    return true;
+  }
+}
+//Email validation
+function isValidEmail() {
+  const $email = $("#mail");
+  const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+  if (regexEmail.test($email.val())) {
+    $email.css("border", "2px solid #c1deeb");
+    return true;
+  } else {
+    $email.css("border", "2px solid red");
+    return false;
+  }
+}
+
+//Register for activites validation
+function isValidActivites() {
+  if ($("[type=checkbox]:checked").length >= 1) {
+    $(".activities").css("border", "");
+    return true;
+  } else {
+    $(".activities").css("border", "2px solid red");
+    return false;
+  }
+}
+function isValidCreditCard() {
+  if ($("#cc-num").val().length >= 13 && $("#cc-num").val().length <= 16) {
+    $("#cc-num").css("border", "2px solid #c1deeb");
+    return true;
+  } else {
+    $("#cc-num").css("border", "2px solid red");
+    return false;
+  }
+}
+
+function isValidZipCode() {
+  const $zipCode = $("#zip").val();
+  const zipRegex = /^[0-9]{5}$/gm;
+  if (zipRegex.test($zipCode)) {
+    $("#zip").css("border", "2px solid #c1deeb");
+    return true;
+  } else {
+    $("#zip").css("border", "2px solid red");
+    return false;
+  }
+}
+
+function isValidCVV() {
+  const $cvv = $("#cvv").val();
+  const cvvRegex = /^[0-9]{3}$/gm;
+  if (cvvRegex.test($cvv)) {
+    $("#cvv").css("border", "2px solid #c1deeb");
+    return true;
+  } else {
+    $("#cvv").css("border", "2px solid red");
+    return false;
+  }
+}
+
+$("[type=submit]").click(function(e) {
+  e.preventDefault();
+  const paymentVal = $("#payment").val();
+  isValidActivites();
+  isValidName();
+  isValidEmail();
+  if (!isValidName && !isValidEmail && !isValidActivites) {
+    e.preventDefault();
+    if (paymentVal === "credit card") {
+      e.preventDefault();
+      isValidCVV();
+      isValidCreditCard();
+      isValidZipCode();
+      if (!isValidCVV && !isValidCreditCard && !isValidZipCode) {
+        e.preventDefault();
+      }
+    }
+  }
+});
