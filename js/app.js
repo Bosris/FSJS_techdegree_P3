@@ -234,21 +234,24 @@ function isValidCVV() {
 // checks if there's any fields are false, if it is then prevent submission
 $("[type=submit]").click(function(e) {
   const paymentVal = $("#payment").val();
-  if (
-    isValidName() === false ||
-    isValidEmail() === false ||
-    isValidActivites() === false
-  ) {
+  if (isValidName() === false) {
     e.preventDefault();
-    if (paymentVal === "credit card") {
+  }
+  if (isValidEmail() === false) {
+    e.preventDefault();
+  }
+  if (isValidActivites() === false) {
+    e.preventDefault();
+  }
+  if (paymentVal === "credit card") {
+    if (isValidCreditCard() === false) {
       e.preventDefault();
-      if (
-        isValidCVV() === false ||
-        isValidCreditCard() === false ||
-        isValidZipCode() === false
-      ) {
-        e.preventDefault();
-      }
+    }
+    if (isValidCVV() === false) {
+      e.preventDefault();
+    }
+    if (isValidZipCode() === false) {
+      e.preventDefault();
     }
   }
 });
